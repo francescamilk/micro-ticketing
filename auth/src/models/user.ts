@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
-import { UserAttrs } from '../types/user-attrs';
+
+interface UserAttrs {
+    email: string;
+    password: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -12,10 +18,14 @@ const userSchema = new mongoose.Schema({
     }   
 });
 
-const User = mongoose.model('User', userSchema);
+// (REF): refactor as User.build
 // Override default constructor to plug TS
 const buildUser = (attrs: UserAttrs) => {
     return new User(attrs);
 }
 
-export { User };
+// NEW CONSTRUCTOR //
+// const user = buildUser({ email: 'ef@milk.com', password: 'secret' })
+
+const User = mongoose.model('User', userSchema);
+export { User, buildUser };
