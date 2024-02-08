@@ -1,11 +1,12 @@
 import { ValidationError } from 'express-validator';
-import { CustomError } from '../types/custom-error';
+import { CustomError } from './custom-error';
 
-export class RequestValidationError extends Error implements CustomError {
+export class RequestValidationError extends CustomError {
     statusCode = 400;
 
     constructor(private errors: ValidationError[]) {
-        super();
+        // For log purposes
+        super('Invalid user signup paramters');
         Object.setPrototypeOf(this, RequestValidationError.prototype);
     }
 

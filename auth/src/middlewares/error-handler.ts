@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RequestValidationError } from '../errors/request-validation-error';
+import { CustomError } from '../classes/errors/custom-error';
 
 const errorHandler = (
     err: Error, 
@@ -7,11 +7,11 @@ const errorHandler = (
     res: Response, 
     next: NextFunction
 ) => {
-    if (err instanceof RequestValidationError) {
+    if (err instanceof CustomError) {
         return res.status(err.statusCode)
         .send({ errors: err.serialisedErrors() });
     }
-
+    // else Error
     res.status(400).send({ 
         errors: [ { message:`Something went wrong. ${err.message}` } ]         
     });

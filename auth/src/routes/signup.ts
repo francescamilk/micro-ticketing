@@ -1,10 +1,9 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { RequestValidationError } from '../errors/request-validation-error';
+import { RequestValidationError } from '../classes/errors/request-validation-error';
 
 const router = express.Router();
 
-// Run validator middlewares before processing request
 router.post('/api/users/signup', [
         body('email')
             .isEmail()
