@@ -1,15 +1,30 @@
 import { Request, Response, NextFunction } from 'express';
+import { RequestValidationError } from '../errors/request-validation-error';
 
-// Standardise the error/messages structure
+// Standardise error/messages structure
+// {
+//     errors: {
+//         message: string, field?: string
+//     }[]
+// }
 const errorHandler = (
     err: Error, 
     req: Request, 
     res: Response, 
     next: NextFunction
 ) => {
-    console.log('Something went wrong: ', err.message);
+    if (err instanceof RequestValidationError) {
+        // Format incoming err custom subclass
+        // RequestValidationError.errors: ValidationError[]
+        const formattedErrs = err.errors.map((error) => {
+            return { message: error.msg, type: error.type }
+        });
+        return res.status(400).send({ errors: formattedErrs })
+    }
+
+    // Generic response
     res.status(400).send({ 
-        message:`Something went wrong: ${err.message}` 
+        errors: [ { message:`Something went wrong: ${err.message}` } ]         
     });
 };
 
