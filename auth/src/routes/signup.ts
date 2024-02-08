@@ -4,19 +4,19 @@ import { body, validationResult } from 'express-validator';
 const router = express.Router();
 
 // Run validator middlewares before processing request
-router.post('/api/v1/signup', [
+router.post('/api/users/signup', [
         body('email')
             .isEmail()
-            .withMessage('Email must have a valid format.'),
+            .withMessage('Email must have be valid.'),
         body('password')
             .trim()
             .isLength({ min: 4, max: 20 })
-            .withMessage('Password must be valid (4-20 chars long).')
+            .withMessage('Password must be 4-20 chars long.')
     ], (req: Request, res: Response) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).send(errors.array());
+            throw new Error('Invalid email or password.')
         }
 
         const { email, password } = req.body;
