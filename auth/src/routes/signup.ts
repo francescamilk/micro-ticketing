@@ -14,13 +14,12 @@ router.post('/api/users/signup', [
             .isLength({ min: 4, max: 20 })
             .withMessage('Password must be 4-20 chars long.')
     ], (req: Request, res: Response) => {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            throw new RequestValidationError(errors.array());
+        const validationErrs = validationResult(req);
+        if (!validationErrs.isEmpty()) {
+            throw new RequestValidationError(validationErrs.array());
         }
 
-        // const { email, password } = req.body;
+        const { email, password } = req.body;
         console.log('Creating user...');
 
         res.send('User created successfully!');
