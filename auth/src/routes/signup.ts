@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { RequestValidationError } from '../classes/errors/request-validation-error';
 import { User, buildUser } from '../models/user';
+import { BadRequestError } from '../classes/errors/bad-request-error';
 
 const router = express.Router();
 
@@ -15,17 +16,19 @@ router.post('/api/users/signup', [
             .withMessage('Password must be 4-20 chars long.')
     ], async (req: Request, res: Response) => {
         const validationErrs = validationResult(req);
+        
+        // Handle failure: bad credentials
         if (!validationErrs.isEmpty()) {
             throw new RequestValidationError(validationErrs.array());
         }
 
         const { email, password } = req.body;
 
+        // Handle failure: user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            console.log('Email already in use.');
-            res.send('TEMP - Email already in use.');
-        }   
+            throw new BadRequestError('Email already in use.');
+        }
 
         const user = buildUser({ email, password });
         await user.save();
